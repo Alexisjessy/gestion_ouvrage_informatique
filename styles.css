@@ -92,3 +92,35 @@
     margin-bottom: 10px;
   }
 
+  .dropdown-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-btn:hover, .dropdown-btn:focus {
+    background-color: #3e8e41;
+}
+
+/* Style de la liste déroulante */
+.dropdown-container {
+    display: none;
+    padding-left: 20px;
+    background-color: #f9f9f9;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.category-item {
+    cursor: pointer;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.category-item:hover {
+    background-color: #f1f1f1;
+}

@@ -1,30 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
-    <title>Document</title>
+    <title>Bibliothèque</title>
 </head>
-
 <body>
     <header>
-
-        <h1>Books</h1>
+        <h1>Ma Bibliothèque</h1>
+        <input type="text" id="search-bar" placeholder="Rechercher un auteur">
+        <div id="result"></div>
+        <button class="dropdown-btn" id="category-btn"> Catégories</button>
+        <div class="dropdown-container" id="category-list"></div>
     </header>
-    <!-- <div id="info"></div> -->
-    <div class="loader-container">
-        <span class="loader"></span>
+    
+
+    <section id="book-list"></section>
+
+
+    <div class="loader-container" id="loader" style="display: none;">
+        <div class="loader"></div>
     </div>
-    <section>
-    <div id ='search-bar' class="search-bar">
-        <input  type="text" placeholder="Search..." />
-     <div id="result"></div>
-
-
-</section>
-        <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
-
 </html>

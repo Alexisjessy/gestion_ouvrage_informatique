@@ -1,132 +1,126 @@
-// if (isLoading) {
-//     return <Loader />;
-
-//   }
-
-// let request = new XMLHttpRequest();
-// request.open("GET", requestURL);
-// request.responseType = "json";
-// request.send();
-
-// fetch('./books.json')
-//     .then(response => response.json())
-//     .then(jsondata => {
-//         console.log(jsondata);
-//         populateHeader(jsondata);
-//     })
-//     .catch(error => console.error('Error fetching JSON:', error));
-
-// let header = document.querySelector("header");
-// let section = document.querySelector("section");
-
-
-// function populateHeader(jsonObj) {
-//     let myH1 = document.createElement("h1");
-//     myH1.textContent = jsonObj.title;
-//     header.appendChild(myH1);
-
-//     let myPara = document.createElement("p");
-//     myPara.textContent = "Description: " + jsonObj.longDescription + " " + jsonObj.authors;
-//     header.appendChild(myPara);
-// }
-
-
-// function displayBooks(jsondata) {
-//     jsondata.forEach(book => {
-//         let myH1 = document.createElement("h1");
-//         myH1.textContent = book.title;
-//         header.appendChild(myH1);
-//     });
-// }
 
 function loadJSON() {
-    fetch('./books.json')
-        .then(response => response.json())
-        .then(jsondata => {
+  const loader = document.getElementById("loader");
+  loader.style.display = "block";
 
-            //     let infoDiv = document.getElementById('info');
-            //     infoDiv.innerHTML = `
-            //     <p><b>Titre:</b> ${jsondata.title}</p>
-            //     <p><b>Description:</b> ${jsondata.longDescription}</p>
-            //     <p><b>Auteur:</b> ${jsondata.authors}</p>
-            //     <p><b>Date de publication:</b> ${jsondata.publishedDate}</p>
-            // `;
-
-
-            displayBooks(jsondata);
-          
-           search(jsondata)
-
-        })
-        .catch(error => console.error('Error fetching JSON:', error));
+  fetch("./books.json")
+    .then((response) => response.json())
+    .then((jsondata) => {
+      loader.style.display = "none";
+      displayBooks(jsondata);
+      setupSearch(jsondata);
+      setupCategoryDropdown(jsondata);
+    })
+    .catch((error) => {
+      loader.style.display = "none";
+      console.error("Erreur lors du chargement du JSON:", error);
+    });
 }
-window.onload = loadJSON;
-
-let header = document.querySelector("header");
-let section = document.querySelector("section");
-
-
 
 function displayBooks(jsondata) {
+  const section = document.getElementById("book-list");
+  section.innerHTML = "";
 
+  jsondata.forEach((book) => {
+    const article = document.createElement("article");
 
-    jsondata.forEach(jsondata => {
+    const img = document.createElement("img");
+    img.src = book.thumbnailUrl;
+    article.appendChild(img);
 
-        let article = document.createElement("article");
+    const title = document.createElement("h1");
+    title.textContent = book.title;
+    article.appendChild(title);
 
-        // let searchBar = document.getElementById('search-bar');
-        // searchBar.textcontent = jsondata.authors;
-        let img = document.createElement("img");
-        img.src = jsondata.thumbnailUrl;
+    const authorPara = document.createElement("p");
+    authorPara.textContent = "Auteur(s): " + book.authors.join(", ");
+    article.appendChild(authorPara);
 
-        article.appendChild(img);
+    const descriptionPara = document.createElement("p");
+    descriptionPara.textContent = "Description: " + book.shortDescription;
+    article.appendChild(descriptionPara);
 
-        let myH1 = document.createElement("h1");
-        myH1.textContent = jsondata.title;
-        article.appendChild(myH1);
-
-        let myPara1 = document.createElement("p");
-        myPara1.textContent = "Author: " + jsondata.authors;
-        article.appendChild(myPara1);
-
-        let myPara2 = document.createElement("p");
-        myPara2.textContent = "Description: " + jsondata.shortDescription;
-        article.appendChild(myPara2);
-
-        section.appendChild(article);
-    });
+    section.appendChild(article);
+  });
 }
 
+function setupSearch(jsondata) {
+  const searchBar = document.getElementById("search-bar");
+  const resultDiv = document.getElementById("result");
 
-function search(jsondata) {
-    const searchBar = document.getElementById('search-bar');
-    const resultDiv = document.getElementById('result');
-  
-    searchBar.addEventListener('input', function () {
-        let query = (this.value || '').toLowerCase(); 
-        resultDiv.innerHTML = ''; 
-        
-        jsondata.forEach(item => {
-            let authors = item.authors || []; 
-             
-     
-            let filteredAuthors = authors.filter(author => (author || '').toLowerCase().includes(query));
+  searchBar.addEventListener("input", function () {
+    const query = this.value.toLowerCase();
+    resultDiv.innerHTML = "";
 
-       
-            if (filteredAuthors.length > 0) {
-                resultDiv.innerHTML += filteredAuthors.join('<br>') + '<br>' < 5;
-                
-            }
-        });
-    });
-
-  
-    document.addEventListener('click', function (e) {
-       
-        if (!searchBar.contains(e.target)) {
-            resultDiv.innerHTML = ''; 
-            
+    // Filtrer les auteurs en fonction de la requête
+    const filteredAuthors = new Set();
+    jsondata.forEach((book) => {
+      const authors = book.authors || [];
+      authors.forEach((author) => {
+        if (author.toLowerCase().startsWith(query) && query.length > 0) {
+          filteredAuthors.add(author);
         }
+      });
     });
+
+    // Limiter à 5 résultats maximum
+    const authorsArray = Array.from(filteredAuthors).slice(0, 5);
+    if (authorsArray.length > 0) {
+      authorsArray.forEach((author) => {
+        const authorItem = document.createElement("p");
+        authorItem.textContent = author;
+        authorItem.style.cursor = "pointer";
+
+        authorItem.addEventListener("click", () => {
+          const authorBooks = jsondata.filter((book) =>
+            book.authors.includes(author)
+          );
+          displayBooks(authorBooks);
+        });
+
+        resultDiv.appendChild(authorItem);
+      });
+    }
+  });
 }
 
+function setupCategoryDropdown(jsondata) {
+  const categoryBtn = document.getElementById("category-btn");
+  const categoryList = document.getElementById("category-list");
+  let isCategoryListVisible = false;
+
+  const categories = {};
+  jsondata.forEach((book) => {
+    book.categories.forEach((category) => {
+      if (!categories[category]) {
+        categories[category] = [];
+      }
+      categories[category].push(book);
+    });
+  });
+
+  categoryBtn.addEventListener("click", () => {
+    isCategoryListVisible = !isCategoryListVisible;
+    if (isCategoryListVisible) {
+      categoryList.style.display = "block";
+      categoryList.style.maxHeight = "300px";
+    } else {
+      categoryList.style.display = "none";
+      categoryList.style.maxHeight = "0";
+    }
+  });
+
+  Object.keys(categories).forEach((category) => {
+    const categoryItem = document.createElement("div");
+    categoryItem.textContent = category;
+    categoryItem.className = "category-item";
+
+    categoryItem.addEventListener("click", () => {
+      displayBooks(categories[category]);
+    });
+
+    categoryList.appendChild(categoryItem);
+  });
+}
+
+window.onload = loadJSON;
