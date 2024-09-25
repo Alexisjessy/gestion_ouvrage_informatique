@@ -10,6 +10,7 @@ function loadJSON() {
       displayBooks(jsondata);
       setupSearch(jsondata);
       setupCategoryDropdown(jsondata);
+      displayAllBooks(jsondata);
     })
     .catch((error) => {
       loader.style.display = "none";
@@ -19,28 +20,83 @@ function loadJSON() {
 
 function displayBooks(jsondata) {
   const section = document.getElementById("book-list");
+
+
+
   section.innerHTML = "";
 
   jsondata.forEach((book) => {
+    const figure = document.createElement("div");
+    figure.classList.add("figure-container");
     const article = document.createElement("article");
+    section.appendChild(figure);
+    let isShortDescriptionVisible = false;
 
+
+    const imgContainer = document.createElement("div");
+    imgContainer.classList.add("img-container")
     const img = document.createElement("img");
     img.src = book.thumbnailUrl;
-    article.appendChild(img);
+    article.appendChild(imgContainer);
+    imgContainer.appendChild(img);
 
     const title = document.createElement("h1");
     title.textContent = book.title;
     article.appendChild(title);
 
+    const isbn = document.createElement("p");
+    isbn.textContent = "Numero ISBN:" + book.isbn;
+    article.appendChild(isbn);
+    try {
+      const publishedDate = document.createElement("p");
+      const date = new Date(Date.parse(book.publishedDate.dt_txt));
+      publishedDate.textContent = "Date de publication: " + date.toLocaleDateString();
+      article.appendChild(publishedDate);
+    } catch (error) {
+      loader.style.display = "none";
+      console.error("Erreur lors du chargement de la date:", error);
+    }
+
+    const pageCount = document.createElement("p");
+    pageCount.textContent = "Nombre de page: " + book.pageCount;
+    article.appendChild(pageCount);
+    if (book.pageCount == 0) {
+      pageCount.textContent = "";
+    }
+
     const authorPara = document.createElement("p");
     authorPara.textContent = "Auteur(s): " + book.authors.join(", ");
     article.appendChild(authorPara);
 
-    const descriptionPara = document.createElement("p");
-    descriptionPara.textContent = "Description: " + book.shortDescription;
-    article.appendChild(descriptionPara);
+    const descriptionPara = document.createElement("div");
+    descriptionPara.style.display = "none";
 
-    section.appendChild(article);
+    if (book.shortDescription == undefined) {
+      descriptionPara.textContent = "";
+
+    } else {
+      descriptionPara.textContent = "Description: " + book.shortDescription;
+      article.appendChild(descriptionPara);
+    }
+    figure.appendChild(article);
+
+
+    figure.addEventListener("click", () => {
+
+      isShortDescriptionVisible = !isShortDescriptionVisible;
+      if (isShortDescriptionVisible) {
+        descriptionPara.style.display = "block";
+        descriptionPara.style.maxHeight = "300px";
+        figure.style.transform = "scale(1.25)";
+        figure.style.overflow = "hidden";
+
+      } else {
+        descriptionPara.style.display = "none";
+        descriptionPara.style.maxHeight = "0";
+        figure.style.transform = "none";
+
+      }
+    });
   });
 }
 
@@ -52,7 +108,6 @@ function setupSearch(jsondata) {
     const query = this.value.toLowerCase();
     resultDiv.innerHTML = "";
 
-    // Filtrer les auteurs en fonction de la requête
     const filteredAuthors = new Set();
     jsondata.forEach((book) => {
       const authors = book.authors || [];
@@ -60,16 +115,32 @@ function setupSearch(jsondata) {
         if (author.toLowerCase().startsWith(query) && query.length > 0) {
           filteredAuthors.add(author);
         }
+
+      });
+
+    });
+    const filteredTitles = new Set();
+    jsondata.forEach((book) => {
+      const titles = book.title || [];
+      titles.forEach((title) => {
+        if (title.toLowerCase().startsWith(query) && query.length > 0) {
+          filteredTitles.add(title);
+        }
       });
     });
+  
 
-    // Limiter à 5 résultats maximum
-    const authorsArray = Array.from(filteredAuthors).slice(0, 5);
+    // Max  authors display
+    const authorsArray = Array.from(filteredAuthors).slice(0, 50);
     if (authorsArray.length > 0) {
       authorsArray.forEach((author) => {
-        const authorItem = document.createElement("p");
+        const authorItem = document.createElement("li");
         authorItem.textContent = author;
         authorItem.style.cursor = "pointer";
+        resultDiv.style.display = "block";
+        resultDiv.style.maxHeight = "300px";
+        resultDiv.style.overflow = "scroll";
+        resultDiv.style.overflowX = "hidden";
 
         authorItem.addEventListener("click", () => {
           const authorBooks = jsondata.filter((book) =>
@@ -81,46 +152,88 @@ function setupSearch(jsondata) {
         resultDiv.appendChild(authorItem);
       });
     }
-  });
-}
 
-function setupCategoryDropdown(jsondata) {
-  const categoryBtn = document.getElementById("category-btn");
-  const categoryList = document.getElementById("category-list");
-  let isCategoryListVisible = false;
+      const titleArray = Array.from(filteredTitles).slice(0, 50);
+      if (titleArray.length > 0) {
+        titleArray.forEach((title) => {
+          const titleItem = document.createElement("li");
+          titleItem.textContent = title;
+          titleItem.style.cursor = "pointer";
+          resultDiv.style.display = "block";
+          resultDiv.style.maxHeight = "300px";
+          resultDiv.style.overflow = "scroll";
+          resultDiv.style.overflowX = "hidden";
 
-  const categories = {};
-  jsondata.forEach((book) => {
-    book.categories.forEach((category) => {
-      if (!categories[category]) {
-        categories[category] = [];
+          titleItem.addEventListener("click", () => {
+            const titleBooks = jsondata.filter((book) =>
+              book.title.includes(title)
+            );
+
+            displayBooks(titleBooks);
+          });
+          resultDiv.appendChild(titleItem);
+        
+        });
       }
-      categories[category].push(book);
+ 
     });
-  });
+  }
+  
 
-  categoryBtn.addEventListener("click", () => {
-    isCategoryListVisible = !isCategoryListVisible;
-    if (isCategoryListVisible) {
-      categoryList.style.display = "block";
-      categoryList.style.maxHeight = "300px";
-    } else {
-      categoryList.style.display = "none";
-      categoryList.style.maxHeight = "0";
+
+    function setupCategoryDropdown(jsondata) {
+      const categoryBtn = document.getElementById("category-btn");
+      const categoryList = document.getElementById("category-list");
+      let isCategoryListVisible = false;
+
+      const categories = {};
+      jsondata.forEach((book) => {
+        book.categories.forEach((category) => {
+          if (!categories[category]) {
+            categories[category] = [];
+          }
+          categories[category].push(book);
+        });
+      });
+
+      categoryBtn.addEventListener("click", () => {
+        isCategoryListVisible = !isCategoryListVisible;
+        if (isCategoryListVisible) {
+          categoryList.style.display = "block";
+          categoryList.style.maxHeight = "300px";
+          categoryList.style.overflow = "scroll";
+          categoryList.style.overflowX = "hidden";
+        } else {
+          categoryList.style.display = "none";
+          categoryList.style.maxHeight = "0";
+        }
+      });
+
+      Object.keys(categories).forEach((category) => {
+        const categoryItem = document.createElement("div");
+        categoryItem.textContent = category;
+        categoryItem.className = "category-item";
+
+        categoryItem.addEventListener("click", () => {
+          displayBooks(categories[category]);
+        });
+
+        categoryList.appendChild(categoryItem);
+      });
     }
-  });
 
-  Object.keys(categories).forEach((category) => {
-    const categoryItem = document.createElement("div");
-    categoryItem.textContent = category;
-    categoryItem.className = "category-item";
 
-    categoryItem.addEventListener("click", () => {
-      displayBooks(categories[category]);
-    });
 
-    categoryList.appendChild(categoryItem);
-  });
-}
+    function displayAllBooks(jsondata) {
+      let displayAllBtn = document.getElementById("all-btn");
 
-window.onload = loadJSON;
+      displayAllBtn.addEventListener("click", () => {
+
+        displayBooks(jsondata);
+
+
+      })
+    }
+
+
+    window.onload = loadJSON;
