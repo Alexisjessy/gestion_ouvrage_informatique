@@ -1,4 +1,4 @@
-
+/* General Styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -18,6 +18,7 @@ header {
   padding: 10px;
   width: 50%;
 }
+
 #result {
   list-style: none;
   padding: 0;
@@ -51,7 +52,7 @@ header {
 
 #book-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, 1fr); 
   gap: 20px;
   width: 90%;
 }
@@ -72,12 +73,11 @@ header {
   width: 80%;
   height: auto;
   filter: grayscale(100);
-  
-
 }
-.book-card img:hover{
+
+.book-card img:hover {
   transform: scale(1.05);
-  overflow:hidden;
+  overflow: hidden;
   transition: 0.2s;
   filter: grayscale(0);
 }
@@ -111,8 +111,7 @@ header {
   background-color: rgb(32, 240, 32);
 }
 
-
-
+/* Modal Styles */
 .modal {
   display: none;
   position: fixed;
@@ -144,4 +143,42 @@ header {
   border: none;
   font-size: 24px;
   cursor: pointer;
+}
+
+/* Responsive Styles */
+/* Tablet (portrait) */
+@media (max-width: 1024px) {
+  #book-list {
+      grid-template-columns: repeat(3, 1fr); 
+  }
+
+  #search-bar {
+      width: 80%; 
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #book-list {
+      grid-template-columns: repeat(2, 1fr); 
+  }
+
+  #search-bar {
+      width: 90%;
+  }
+}
+
+/* Very Small Mobile */
+@media (max-width: 480px) {
+  #book-list {
+      grid-template-columns: 1fr; 
+  }
+
+  #search-bar {
+      width: 100%; 
+  }
+
+  .modal-content {
+      width: 90%; 
+  }
 }
