@@ -69,8 +69,17 @@ header {
 }
 
 .book-card img {
-  width: 100%;
+  width: 80%;
   height: auto;
+  filter: grayscale(100);
+  
+
+}
+.book-card img:hover{
+  transform: scale(1.05);
+  overflow:hidden;
+  transition: 0.2s;
+  filter: grayscale(0);
 }
 
 .dropdown-btn, .display-all-btn {
@@ -99,10 +108,11 @@ header {
 }
 
 .category-item:hover {
-  background-color: #ddd;
+  background-color: rgb(32, 240, 32);
 }
 
-/* Modal Styles */
+
+
 .modal {
   display: none;
   position: fixed;
