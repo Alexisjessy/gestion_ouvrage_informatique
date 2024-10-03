@@ -1,4 +1,5 @@
-/* General Styles */
+/* ******************  General Styles  *****************************
+********************                  ************************** */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -11,6 +12,11 @@ body {
 header {
   text-align: center;
   margin: 20px 0;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 #search-bar {
@@ -72,14 +78,12 @@ header {
 .book-card img {
   width: 80%;
   height: auto;
-  filter: grayscale(100);
 }
 
 .book-card img:hover {
   transform: scale(1.05);
   overflow: hidden;
   transition: 0.2s;
-  filter: grayscale(0);
 }
 
 .dropdown-btn, .display-all-btn {
@@ -111,7 +115,8 @@ header {
   background-color: rgb(32, 240, 32);
 }
 
-/* Modal Styles */
+/******** Modal Styles   *********** */
+
 .modal {
   display: none;
   position: fixed;
@@ -145,8 +150,109 @@ header {
   cursor: pointer;
 }
 
-/* Responsive Styles */
-/* Tablet (portrait) */
+/******** Cart Styles *********/
+#panier-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#panier-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.panier-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.panier-item p {
+  margin: 0;
+}
+
+.remove-from-cart {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.remove-from-cart:hover {
+  background-color: #c0392b;
+}
+
+#valider-panier {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+#valider-panier:hover {
+  background-color: #218838;
+}
+#history-btn {
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#history-btn:hover {
+  background-color: #0056b3;
+}
+
+/********* Styles for the order history page ****************** */
+
+#order-history-container {
+  width: 90%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+#order-history-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#order-history-list {
+  list-style: none;
+  padding: 0;
+}
+
+#order-history-list li {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+#order-history-list ul {
+  margin: 0;
+  padding-left: 20px;
+}
+/* ****************  Media Queries *************/
+/* *************    Tablet (portrait) *************** */
+
 @media (max-width: 1024px) {
   #book-list {
       grid-template-columns: repeat(3, 1fr); 
@@ -155,9 +261,13 @@ header {
   #search-bar {
       width: 80%; 
   }
+
+  #panier-container {
+      width: 95%;
+  }
 }
 
-/* Mobile */
+/***** Mobile   ***** */
 @media (max-width: 768px) {
   #book-list {
       grid-template-columns: repeat(2, 1fr); 
@@ -166,9 +276,14 @@ header {
   #search-bar {
       width: 90%;
   }
+
+  #panier-container {
+      width: 100%;
+  }
 }
 
-/* Very Small Mobile */
+/* *****  Very Small Mobile ******/
+
 @media (max-width: 480px) {
   #book-list {
       grid-template-columns: 1fr; 

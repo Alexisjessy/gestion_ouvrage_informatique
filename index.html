@@ -7,37 +7,43 @@
     <title>Bibliothèque</title>
 </head>
 <body>
-    <header>
-        <h1>Ma Bibliothèque</h1>
+   <header>
+    <h1>Ma Bibliothèque</h1>
+    <div class="header-right">
         <input type="text" id="search-bar" placeholder="Rechercher...">
-        <ul id="result"></ul>
-        <div id="book-results"></div>
-        <button class="dropdown-btn" id="category-btn">Catégories</button>
-        <div class="dropdown-container" id="category-list"></div>
-        <button class="display-all-btn" id="all-btn">Afficher tous</button>
-    </header>
-
-    <section id="book-list"></section>
-
-    <div class="loader-container" id="loader" style="display: none;">
-        <div class="loader"></div>
+        <section id="panier-section">
+            <h2>Votre Panier</h2>
+            <div id="panier">Votre panier est vide.</div>
+            <button id="valider-panier">Valider le panier</button>
+        </section>
+        <button id="history-btn">Historique des Commandes</button>
     </div>
+    <ul id="result"></ul>
+    <div id="book-results"></div>
+    <button class="dropdown-btn" id="category-btn">Catégories</button>
+    <div class="dropdown-container" id="category-list"></div>
+    <button class="display-all-btn" id="all-btn">Afficher tous</button>
+</header>
+
+<section id="book-list"></section>
 
 
-    <div class="modal" id="book-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title"></h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p><strong>Auteurs:</strong> <span id="modal-authors"></span></p>
-                <p><strong>Date de publication:</strong> <span id="modal-date"></span></p>
-                <p><strong>Description:</strong> <span id="modal-description"></span></p>
-            </div>
+<div class="loader-container" id="loader" style="display: none;">
+    <div class="loader"></div>
+</div>
+
+<div class="modal" id="book-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modal-title"></h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p><strong>Auteurs:</strong> <span id="modal-authors"></span></p>
+            <p><strong>Date de publication:</strong> <span id="modal-date"></span></p>
+            <p><strong>Description:</strong> <span id="modal-description"></span></p>
         </div>
     </div>
+</div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+<script src="script.js"></script>
